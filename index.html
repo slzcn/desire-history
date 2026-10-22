@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="description" content="欲望简史——12道题测出你灵魂深处的欲望原型">
+<title>欲望简史</title>
+<style>
+:root{
+  --bg:#0d0a06; --bg2:#14100a; --gold:#c9a84c; --gold-dim:#8a7330;
+  --gold-light:#e8d49a; --cream:#e8e0d0; --cream-dim:#a8a098;
+  --card:rgba(201,168,76,0.08); --card-hover:rgba(201,168,76,0.16);
+  --border:rgba(201,168,76,0.25); --border-hover:rgba(201,168,76,0.5);
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{
+  background:var(--bg);color:var(--cream);
+  font-family:"Songti SC","STSong","SimSun","Noto Serif SC",serif;
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;top:0;left:0;width:100%;height:100%;
+  background:radial-gradient(ellipse at 50% 20%,rgba(201,168,76,0.06) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 80%,rgba(201,168,76,0.03) 0%,transparent 50%);
+  pointer-events:none;z-index:0;
+}
+#app{width:100%;max-width:560px;padding:0 20px;position:relative;z-index:1;flex:1;display:flex;flex-direction:column}
+.hidden{display:none!important}
+
+/* 封面 */
+#cover{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;flex:1;min-height:100vh;padding-bottom:60px}
+#cover h1{
+  font-size:2.8rem;color:var(--gold);letter-spacing:0.3em;font-weight:normal;
+  margin-bottom:8px;text-shadow:0 0 20px rgba(201,168,76,0.2);
+}
+#cover .subtitle{font-size:0.9rem;color:var(--cream-dim);letter-spacing:0.4em;margin-bottom:40px}
+#cover .intro{font-size:0.95rem;color:var(--cream);line-height:2;margin-bottom:48px;max-width:380px;opacity:0.85}
+#cover .ornament{color:var(--gold-dim);font-size:1.2rem;margin-bottom:40px;letter-spacing:1em;padding-left:1em}
+.start-btn{
+  display:inline-block;padding:14px 48px;font-size:1rem;color:var(--gold);
+  border:1px solid var(--gold-dim);border-radius:2px;background:transparent;
+  font-family:inherit;letter-spacing:0.3em;cursor:pointer;transition:all 0.4s;
+}
+.start-btn:hover,.start-btn:active{background:var(--card-hover);border-color:var(--gold);box-shadow:0 0 20px rgba(201,168,76,0.15)}
+
+/* 进度条 */
+.progress-wrap{padding:24px 0 8px}
+.progress-bar{height:3px;background:rgba(201,168,76,0.12);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));border-radius:2px;transition:width 0.5s ease;width:0%}
+.progress-text{font-size:0.75rem;color:var(--cream-dim);letter-spacing:0.1em;margin-top:8px;text-align:center}
+
+/* 题目 */
+#quiz{display:flex;flex-direction:column;flex:1;padding-top:20px}
+.question-wrap{flex:1;display:flex;flex-direction:column;justify-content:center;animation:fadeIn 0.5s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.question-text{font-size:1.15rem;color:var(--gold-light);line-height:2;margin-bottom:32px;text-align:center}
+.options{display:flex;flex-direction:column;gap:12px}
+.option{
+  padding:16px 20px;background:var(--card);border:1px solid var(--border);
+  border-radius:4px;color:var(--cream);font-size:0.95rem;line-height:1.7;
+  cursor:pointer;transition:all 0.25s;font-family:inherit;text-align:left;
+}
+.option:hover,.option:active{background:var(--card-hover);border-color:var(--border-hover);color:var(--gold-light)}
+.option .opt-label{color:var(--gold);margin-right:8px;font-weight:bold}
+
+/* 结果页 */
+#result{display:flex;flex-direction:column;align-items:center;flex:1;padding:30px 0 60px;animation:fadeIn 0.6s ease}
+.result-emoji{font-size:3.5rem;margin-bottom:12px}
+.result-type{font-size:2rem;color:var(--gold);letter-spacing:0.2em;margin-bottom:6px}
+.result-figure{font-size:0.85rem;color:var(--cream-dim);letter-spacing:0.15em;margin-bottom:24px}
+.result-desc{font-size:0.95rem;color:var(--cream);line-height:2;text-align:center;max-width:420px;margin-bottom:24px}
+.result-divider{width:60px;height:1px;background:var(--gold-dim);margin:8px 0 24px}
+.combo-title{font-size:0.8rem;color:var(--gold-dim);letter-spacing:0.3em;margin-bottom:12px}
+.combo-text{font-size:0.9rem;color:var(--cream);line-height:1.9;text-align:center;max-width:420px;margin-bottom:30px;opacity:0.85}
+.score-chart{width:100%;max-width:360px;margin-bottom:32px}
+.score-row{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.score-name{font-size:0.75rem;color:var(--cream-dim);width:56px;text-align:right;flex-shrink:0}
+.score-bar-bg{flex:1;height:6px;background:rgba(201,168,76,0.08);border-radius:3px;overflow:hidden}
+.score-bar-fill{height:100%;background:var(--gold-dim);border-radius:3px;transition:width 0.8s ease}
+.score-val{font-size:0.7rem;color:var(--cream-dim);width:20px;flex-shrink:0}
+.share-section{width:100%;max-width:420px}
+.share-btn{
+  display:block;width:100%;padding:12px;font-size:0.85rem;color:var(--gold);
+  border:1px solid var(--gold-dim);border-radius:3px;background:transparent;
+  font-family:inherit;letter-spacing:0.15em;cursor:pointer;transition:all 0.3s;margin-bottom:12px;
+}
+.share-btn:hover,.share-btn:active{background:var(--card-hover);border-color:var(--gold)}
+.share-text-box{
+  font-size:0.8rem;color:var(--cream);line-height:1.8;background:var(--card);
+  border:1px solid var(--border);border-radius:3px;padding:14px;
+  white-space:pre-wrap;word-break:break-all;display:none;
+}
+.restart-btn{margin-top:20px;font-size:0.8rem;color:var(--cream-dim);background:none;border:none;font-family:inherit;cursor:pointer;text-decoration:underline;letter-spacing:0.1em}
+.restart-btn:active{color:var(--gold)}
+.copied-tip{font-size:0.75rem;color:var(--gold);text-align:center;margin-top:8px;opacity:0;transition:opacity 0.3s}
+.copied-tip.show{opacity:1}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- 封面 -->
+<div id="cover">
+  <h1>欲望简史</h1>
+  <div class="subtitle">DESIRE&nbsp;HISTORY</div>
+  <div class="ornament">· · ·</div>
+  <div class="intro">十二道情景，八种原型<br>在选择的瞬间，照见你灵魂深处的渴求<br><br>你的欲望，写满了你的故事</div>
+  <button class="start-btn" onclick="startQuiz()">开始测试</button>
+</div>
+
+<!-- 题目区 -->
+<div id="quiz" class="hidden">
+  <div class="progress-wrap">
+    <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="progress-text" id="progressText"></div>
+  </div>
+  <div class="question-wrap" id="questionWrap"></div>
+</div>
+
+<!-- 结果区 -->
+<div id="result" class="hidden"></div>
+
+</div>
+
+<script>
+const types = [
+  {id:0,name:'权力欲',emoji:'⚔️',figure:'曹操',
+   desc:'你的内核是一团不熄的掌控之火。秩序是你呼吸的空气，权威是你站立的地基。你天生知道怎样把混乱归拢为章法，怎样让一群人朝同一个方向走。你不是贪恋权力本身——你贪恋的是事情按照你的意志运转时，那种确定性。当局面失控，你的焦虑不是恐惧，是愤怒。',
+   symbol:'权杖与铁律'},
+  {id:1,name:'认可欲',emoji:'👁️',figure:'林黛玉',
+   desc:'你是面镜子，需要被照亮才觉得自己存在。他人的目光是你的养料，赞美是你的氧气，忽视是你的毒药。你敏感、细腻、在意细节，因为每一个细节都是别人态度的信号。你不是虚荣——你只是在用世界的回声确认自己是否真实。',
+   symbol:'目光之镜'},
+  {id:2,name:'安全欲',emoji:'🛡️',figure:'郭靖',
+   desc:'你的渴望不是飞翔，而是落地。你追求的不是巅峰，而是脚下那块永远不会塌的地面。稳定是你的信仰，可控是你的安全感，可预测是你的幸福。你不是胆小——你只是太清楚失控的代价，所以选择把每一步都踩实。城墙之内，才是你的天下。',
+   symbol:'磐石城墙'},
+  {id:3,name:'自由欲',emoji:'🕊️',figure:'孙悟空',
+   desc:'你的灵魂长着翅膀，任何边界都是牢笼。规则让你窒息，重复让你枯萎，"应该如此"四个字是你的敌人。你需要的是旷野、是未知、是随时能转身离开的底气。你不是不珍惜——你只是觉得，如果连转身的能力都没有，一切珍惜都是假的。',
+   symbol:'破壁之风'},
+  {id:4,name:'知识欲',emoji:'📖',figure:'王阳明',
+   desc:'世界在你眼里永远是一道没解完的题。你的快乐不在答案，在追问本身。你拆解一切——为什么天是蓝的，为什么人会痛苦，为什么这件事是这样而不是那样。你不是不行动——你只是觉得，不理解就行动，等于蒙眼狂奔。知行合一，是你的信条。',
+   symbol:'无尽书卷'},
+  {id:5,name:'创造欲',emoji:'🎨',figure:'达芬奇',
+   desc:'你无法忍受世界只停留在它已有的样子。你的手会痒，你的脑会燃，你总觉得还差一个东西没有被造出来。你不满足于使用——你想创造。一砖一瓦、一笔一画、一行代码、一段旋律，你要把不存在的东西带到这个世界上。留下的痕迹，就是你活过的证据。',
+   symbol:'创世之手'},
+  {id:6,name:'连接欲',emoji:'🫂',figure:'贾宝玉',
+   desc:'你最深处的恐惧不是失败、不是死亡，是孤独。你渴望理解与被理解，渴望那种一个人懂你全部的战栗感。你在人群里找灵魂，在对话里找回声，在拥抱里找归属。你不是依赖——你只是明白，一个人的完整需要另一个人来补全。',
+   symbol:'千丝万缕'},
+  {id:7,name:'超越欲',emoji:'🌌',figure:'亚历山大大帝',
+   desc:'现实对你来说总是太小。你渴望的不是一个位置、一段关系、一份成就——你渴望的是更大的存在感，是历史级的叙事，是超越自身有限性的永恒。你不满足于"好"，你要"最"；不满足于"有"，你要"是"。你的欲望指向无穷，这个世界只是你的起点。',
+   symbol:'星辰大海'}
+];
+
+const comboReadings = {
+  '0_1':'权力与认可——你既要坐上最高的位置，也要所有人都抬头看你。台上的王冠和台下的掌声，你一样都不能少。',
+  '0_2':'权力与安全——你用掌控来对抗恐惧。越是把一切攥在手里，越觉得安全。秩序是你的铠甲，权威是你的盾牌。',
+  '0_3':'权力与自由——你渴望的是不受约束的掌控力。不愿被管，却要管一切。你在挣脱枷锁的同时，也在铸造自己的权杖。',
+  '0_4':'权力与知识——你不是莽夫，你是棋手。你用理解世界来征服世界，用洞见来制定规则。智者的权力，最难以撼动。',
+  '0_5':'权力与创造——你不只想统治现有的世界，你要亲手造一个新的。权力让你有资源，创造让你有蓝图，二者合一便是造物主。',
+  '0_6':'权力与连接——你的权力不是为了高高在上，而是为了守护你在乎的人。你掌控局面的动力，是让所爱之人不被风雨侵扰。',
+  '0_7':'权力与超越——你的目标不是一时一地的掌控，而是改变游戏规则本身。你要的不是王座，是重新定义什么是王座。',
+
+  '1_2':'认可与安全——你渴望被接纳，因为被接纳意味着安全。你在别人的认可里寻找自己的立足之地，温暖的外壳是你的堡垒。',
+  '1_3':'认可与自由——你想要所有人的目光，却不愿被任何目光束缚。你在人群中闪耀，又在掌声中转身离去，永远在追逐与挣脱之间。',
+  '1_4':'认可与知识——你用才华换取目光，用理解力赢得尊重。你知道自己聪明，但更在意别人是否也这么认为。',
+  '1_5':'认可与创造——你创造是为了被看见。每一件作品都是一封写给世界的情书，每一声赞叹都是你存在的回音。',
+  '1_6':'认可与连接——你渴望的不是泛泛的赞美，而是那个真正懂你的人说出的一句"你真好"。被看见和被理解，对你来说是一件事。',
+  '1_7':'认可与超越——你不只想被记住，你想被仰望。你的野心不在当下，而在历史。你要的不是掌声，是传说。',
+
+  '2_3':'安全与自由——你想要自由，但更怕失控。你在"想飞"和"怕摔"之间反复拉扯，最终选择了一个随时能回来的出口。',
+  '2_4':'安全与知识——你用知识构建安全网。理解得越多，未知越少，恐惧越小。你是最审慎的智者，不冒无谓的险。',
+  '2_5':'安全与创造——你的创造有边界感。你在可控的范围内动手搭建，每一块砖都经过测量。你不是天马行空，你是精雕细琢。',
+  '2_6':'安全与连接——稳定的关系是你最大的安全感来源。一段可靠的连接，胜过万两黄金。你最深的需求是"有人守着"。',
+  '2_7':'安全与超越——你想要的超越不是冒险，而是把根基打到最深。你相信真正的伟大来自不可动摇的底盘，而非华而不实的高塔。',
+
+  '3_4':'自由与知识——你追求的是思想的无边界漫游。没有围墙的图书馆，没有终点的追问，自由地探索一切——这是你最高版本的快乐。',
+  '3_5':'自由与创造——你不只想打破旧规则，你要造出新规则。自由的灵魂配上创造的手，你是世界的颠覆者和重塑者。',
+  '3_6':'自由与连接——你渴望一种不束缚彼此的连接。你在人群中来去自如，却总在某个瞬间被一个灵魂绊住脚步。自由和归属，你都要。',
+  '3_7':'自由与超越——你的超越就是永远在路上。你拒绝一切定义，拒绝一切终点，连"超越"本身都是一种你随时可以推翻的概念。',
+
+  '4_5':'知识与创造——你是纯粹的探索者和建造者。理解世界是为了改造世界，追问"为什么"是为了回答"还可以是什么"。你是达芬奇式的灵魂。',
+  '4_6':'知识与连接——你渴望的不是独自参透真理，而是找到一个能和你一起讨论到天亮的人。智性的共鸣，是你最深的连接方式。',
+  '4_7':'知识与超越——你追问的终极问题总是指向无限。宇宙、永恒、存在本身——你的求知欲不是功利，是对"更大的存在"的本能渴望。',
+
+  '5_6':'创造与连接——你创造的终极目的是和人产生共鸣。一首歌、一幅画、一段代码——如果它触动了另一个人，你的创造就完成了闭环。',
+  '5_7':'创造与超越——你的创造指向永恒。你不只想做一件好东西，你想做一件被时间记住的东西。你的欲望是：在世界上留下不可磨灭的痕迹。',
+
+  '6_7':'连接与超越——你渴望的连接不是平凡的陪伴，而是灵魂层面的共振。你要的不是"有人"，而是"有那个人"——一个让你的存在感被放大到无限的人。'
+};
+
+const questions = [
+  {q:'你被关在一座只有你一人的岛上，岛上什么都有，唯独没有别人。三天后你最先崩溃的会是？',
+   opts:[
+     {t:'没有人可以指挥和安排',s:{0:1}},
+     {t:'没有人在意你做了什么',s:{1:1}},
+     {t:'不知道有没有人来救你',s:{2:1}},
+     {t:'没有任何新鲜事可以探索',s:{4:1}}
+   ]},
+  {q:'你突然获得一笔巨款，足以改变人生。你做的第一件事是？',
+   opts:[
+     {t:'买下一栋楼，让所有租客听你的规矩',s:{0:1}},
+     {t:'拿去做一件让所有人都惊叹的事',s:{1:1,5:1}},
+     {t:'全部存起来，确保后半生万无一失',s:{2:1}},
+     {t:'立刻出发，去一个地图上找不到的地方',s:{3:1}}
+   ]},
+  {q:'深夜独坐，无人打扰，你脑海里最常冒出的念头是？',
+   opts:[
+     {t:'如果是我来管理这一切，会做得比他们好',s:{0:1}},
+     {t:'他们到底怎么看我？上次那句话是不是有别的意思',s:{1:1}},
+     {t:'万一明天出了什么事……各种最坏的情况',s:{2:1}},
+     {t:'宇宙到底是怎么回事？意识的本质是什么',s:{4:1}}
+   ]},
+  {q:'以下四种恐惧，哪一个最让你不寒而栗？',
+   opts:[
+     {t:'被所有人遗忘，像你从未存在过一样',s:{1:1,6:1}},
+     {t:'被困在一个身份里，永远无法挣脱',s:{3:1}},
+     {t:'生活突然失控，一切变得无法预测',s:{2:1}},
+     {t:'一辈子只能做一件事，再也没有新东西',s:{4:1}}
+   ]},
+  {q:'如果只能留一样东西给后世，你选择留下？',
+   opts:[
+     {t:'一套制度或秩序，后人都要遵照执行',s:{0:1}},
+     {t:'一件惊世之作，让所有人叹为观止',s:{1:1,5:1}},
+     {t:'一座坚不可摧的城堡，庇护后人千年',s:{2:1}},
+     {t:'一个改变人类认知的发现',s:{4:1,7:1}}
+   ]},
+  {q:'你理想的居住环境是？',
+   opts:[
+     {t:'人迹罕至的山顶，俯瞰万物',s:{7:1}},
+     {t:'一间热闹的客栈，人来人往从不寂寞',s:{6:1}},
+     {t:'一座坚固的城堡，铜墙铁壁万无一失',s:{2:1}},
+     {t:'一顶帐篷，随时拔营去任何地方',s:{3:1}}
+   ]},
+  {q:'面对一道所有人都说无解的谜题，你的反应是？',
+   opts:[
+     {t:'放弃，把精力花在能解决的问题上',s:{0:1}},
+     {t:'不吃不喝也要想明白，解不出来不罢休',s:{4:1}},
+     {t:'把它变成一个故事或一件艺术品',s:{5:1}},
+     {t:'找几个朋友一起讨论，集思广益',s:{6:1}}
+   ]},
+  {q:'你最受不了别人怎么评价你？',
+   opts:[
+     {t:'"没什么本事"',s:{0:1}},
+     {t:'"挺没意思的一个人"',s:{1:1}},
+     {t:'"没什么胆量"',s:{3:1}},
+     {t:'"太普通了"',s:{7:1}}
+   ]},
+  {q:'如果世界明天就要毁灭，你最后一天的选择是？',
+   opts:[
+     {t:'做一件让所有人永远记住你的事',s:{1:1,7:1}},
+     {t:'拼尽全力找到拯救世界的方法',s:{4:1,0:1}},
+     {t:'和最重要的人在一起，什么都不做',s:{6:1}},
+     {t:'去做一件你从未敢做的事',s:{3:1,5:1}}
+   ]},
+  {q:'你对"成功"的定义是？',
+   opts:[
+     {t:'别人都听你的',s:{0:1}},
+     {t:'别人都知道你',s:{1:1}},
+     {t:'一切都在你的计划之中',s:{2:1}},
+     {t:'你做到了别人做不到的事',s:{7:1}}
+   ]},
+  {q:'你走进一座空无一人的古城，你的第一反应是？',
+   opts:[
+     {t:'这个地方该由谁来管理和重建',s:{0:1}},
+     {t:'这里发生过什么故事，如果写下来一定很精彩',s:{5:1,6:1}},
+     {t:'这里安全吗？有没有塌陷或危险',s:{2:1}},
+     {t:'这座城市的结构为什么这样设计',s:{4:1}}
+   ]},
+  {q:'生命最后一天，你最想做的一件事是？',
+   opts:[
+     {t:'留下一个传说，让后人仰望千年',s:{7:1}},
+     {t:'和所有重要的人一一道别，说清每一句没说的话',s:{6:1}},
+     {t:'去看一个从未见过的日出',s:{3:1,7:1}},
+     {t:'把脑海里最后一个想法写下来',s:{4:1,5:1}}
+   ]}
+];
+
+let currentQ = 0;
+let scores = [0,0,0,0,0,0,0,0];
+let answers = [];
+
+function startQuiz(){
+  currentQ = 0;
+  scores = [0,0,0,0,0,0,0,0];
+  answers = [];
+  document.getElementById('cover').classList.add('hidden');
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = questions[currentQ];
+  const wrap = document.getElementById('questionWrap');
+  const labels = ['A','B','C','D'];
+  let html = '<div class="question-text">'+q.q+'</div><div class="options">';
+  for(let i=0;i<q.opts.length;i++){
+    html += '<div class="option" onclick="selectOption('+i+')"><span class="opt-label">'+labels[i]+'.</span>'+q.opts[i].t+'</div>';
+  }
+  html += '</div>';
+  wrap.innerHTML = html;
+  wrap.style.animation = 'none';
+  void wrap.offsetWidth;
+  wrap.style.animation = '';
+  // progress
+  const pct = ((currentQ)/questions.length*100);
+  document.getElementById('progressFill').style.width = pct+'%';
+  document.getElementById('progressText').textContent = '第 '+(currentQ+1)+' 题 / 共 '+questions.length+' 题';
+  window.scrollTo(0,0);
+}
+
+function selectOption(i){
+  const q = questions[currentQ];
+  const opt = q.opts[i];
+  for(let k in opt.s){
+    scores[parseInt(k)] += opt.s[k];
+  }
+  answers.push(i);
+  currentQ++;
+  if(currentQ >= questions.length){
+    showResult();
+  } else {
+    renderQuestion();
+  }
+}
+
+function showResult(){
+  // find top 2
+  let ranked = scores.map((v,i)=>({v,i})).sort((a,b)=>b.v-a.v || a.i-b.i);
+  const top1 = ranked[0].i;
+  const top2 = ranked[1].i;
+  const t1 = types[top1];
+  const t2 = types[top2];
+
+  // combo key
+  const minI = Math.min(top1,top2), maxI = Math.max(top1,top2);
+  const comboKey = minI+'_'+maxI;
+  const combo = comboReadings[comboKey] || ('你的欲望在 '+t1.name+' 与 '+t2.name+' 之间共振——前者是你显性的渴求，后者是你暗涌的底色。');
+
+  // progress full
+  document.getElementById('progressFill').style.width = '100%';
+  document.getElementById('progressText').textContent = '测试完成';
+
+  // share text
+  const shareText = '【欲望简史】我的欲望原型是「'+t1.name+'」——'+t1.desc.slice(0,30)+'…\n\n代表人物：'+t1.figure+' '+t1.emoji+'\n次要原型：'+t2.name+'\n\n你的欲望是什么？来测测：https://slzcn.github.io/desire-history/';
+
+  // score chart
+  let chartHtml = '<div class="score-chart">';
+  let maxScore = Math.max(...scores, 1);
+  for(let i=0;i<8;i++){
+    const t = types[i];
+    const w = (scores[i]/maxScore*100);
+    chartHtml += '<div class="score-row">'+
+      '<span class="score-name">'+t.name+'</span>'+
+      '<div class="score-bar-bg"><div class="score-bar-fill" style="width:'+w+'%"></div></div>'+
+      '<span class="score-val">'+scores[i]+'</span></div>';
+  }
+  chartHtml += '</div>';
+
+  const html = `
+    <div class="result-emoji">${t1.emoji}</div>
+    <div class="result-type">${t1.name}</div>
+    <div class="result-figure">代表人物 · ${t1.figure}</div>
+    <div class="result-desc">${t1.desc}</div>
+    <div class="result-divider"></div>
+    <div class="combo-title">双原型共振</div>
+    <div class="combo-text">${combo}</div>
+    ${chartHtml}
+    <div class="share-section">
+      <button class="share-btn" onclick="copyShare()">复制分享文案</button>
+      <div class="share-text-box" id="shareBox">${shareText.replace(/</g,'&lt;')}</div>
+      <div class="copied-tip" id="copiedTip">已复制到剪贴板</div>
+      <button class="restart-btn" onclick="startQuiz()">重新测试</button>
+    </div>
+  `;
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('result').innerHTML = html;
+  window.scrollTo(0,0);
+
+  // animate bars
+  setTimeout(()=>{
+    document.querySelectorAll('.score-bar-fill').forEach(el=>{
+      const w = el.style.width;
+      el.style.width = '0%';
+      setTimeout(()=>{el.style.width=w;},50);
+    });
+  },100);
+}
+
+function copyShare(){
+  const box = document.getElementById('shareBox');
+  const text = box.innerText;
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(text).then(()=>{
+      showCopied();
+    }).catch(()=>{
+      fallbackCopy(text);
+    });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function fallbackCopy(text){
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try{document.execCommand('copy');}catch(e){}
+  document.body.removeChild(ta);
+  showCopied();
+}
+
+function showCopied(){
+  const tip = document.getElementById('copiedTip');
+  tip.classList.add('show');
+  setTimeout(()=>{tip.classList.remove('show');},2000);
+}
+</script>
+</body>
+</html>
